@@ -1,1 +1,1 @@
-INSERT INTO member (name) VALUES ('dongseok.ok');
+INSERT INTO member (name) VALUES ('Alice');

@@ -37,20 +37,22 @@ public class SpockTransactionTestApplicationTests {
     @Test
     public void contextLoads() throws Exception {
         Member member = new Member();
-        member.setName("ddolking");
+        member.setName("Dave");
         ResultActions result = mvc.perform(post("/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new Gson().toJson(member)));
         result.andExpect(status().isOk());
+        memberRepository.findAll().forEach(System.out::println);
     }
 
     @Test
     public void contextLoads2() throws Exception {
         Member member = new Member();
-        member.setName("ddolking2");
+        member.setName("Eve");
         ResultActions result = mvc.perform(post("/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new Gson().toJson(member)));
         result.andExpect(status().isOk());
+        memberRepository.findAll().forEach(System.out::println);
     }
 }

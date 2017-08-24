@@ -6,10 +6,15 @@ import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.web.client.MockMvcClientHttpRequestFactory
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
+
+import javax.annotation.PostConstruct
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -19,13 +24,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @Transactional
-class MemberControllerSpec extends Specification {
+class MemberControllerSpec2 extends Specification {
 
     @Autowired
     MockMvc mvc
 
+    RestTemplate restTemplate
+
     @Autowired
     MemberRepository memberRepository
+
+    @PostConstruct
+    def init() {
+        restTemplate = new RestTemplate(new MockMvcClientHttpRequestFactory(mvc))
+    }
 
     def setup() {
         println("SETUP: " + memberRepository.findAll().size())
@@ -33,22 +45,23 @@ class MemberControllerSpec extends Specification {
 
     def "test repository"() {
         when:
-        def result = mvc.perform(get("/members"))
+        def result = restTemplate.getForEntity("/members", List)
 
         then:
-        result.andExpect(status().isOk())
+        result.statusCode == HttpStatus.OK
     }
 
     def "create member"() {
         given:
         def data = new Member()
-        data.name = "Bob"
+        data.name = "Charlie"
 
         when:
-        def result = mvc.perform(post("/members").contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(data)))
+        def result = restTemplate.postForEntity('/members', data, Member)
 
         then:
-        result.andExpect(status().isOk())
+        result.statusCode == HttpStatus.OK
+        result.body.name == "Charlie"
     }
 
 }
