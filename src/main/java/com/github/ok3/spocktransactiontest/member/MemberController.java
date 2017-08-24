@@ -1,10 +1,7 @@
 package com.github.ok3.spocktransactiontest.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class MemberController {
     }
 
     @PostMapping("")
-    public Member addMember(Member member) {
+    public Member addMember(@RequestBody Member member) {
         return memberService.addMember(member);
     }
 }
